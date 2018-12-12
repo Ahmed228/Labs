@@ -1,0 +1,93 @@
+#define _CRT_SECURE_NO_WARNINGS 
+#include<stdio.h> 
+#include<stdlib.h> 
+#include<string.h> 
+#include <math.h> 
+
+//перевод из строки в массив элементов
+void digits(char nam[], int namMas[], int length, int *bad) { 
+    for (int i = 0; i <= length; i++) { 
+        if (nam[i] - 48 < 10) namMas[i] = nam[i] - 48;  
+        else *bad = 1; 
+    } 
+}
+
+//перестановки
+void change(int len, int namMas[], int *cho) { 
+    int h = 0, no = 0, min = 9, max = len, b = 0; 
+    for (len; len > 1; len--) { 
+        if (namMas[len - 1] < namMas[len]) { 
+            h = namMas[len - 1]; 
+            namMas[len - 1] = namMas[len]; 
+            namMas[len] = h; 
+            no = 1;
+            for (len; len < max / 2; len++) { 
+                b = namMas[len]; 
+                namMas[len] = namMas[max - len - 1]; 
+                namMas[max - len - 1] = b; 
+                } 
+            break; 
+            } 
+    } 
+    if (no == 0) { 
+        for (int i = max; i > 0; i--) { 
+            if (namMas[0] < namMas[i] && namMas[i] < min) { 
+                min = namMas[i]; 
+                len = i; 
+                *cho = 0; 
+                break; 
+            } 
+            else *cho = 1; 
+		} 
+		namMas[len] = namMas[0]; 
+		namMas[0] = min; 
+		len = 1; 
+		for (len; len <= max / 2; len++) { 
+			b = namMas[len]; 
+			namMas[len] = namMas[max - len + 1]; 
+			namMas[max - len + 1] = b; 
+		} 
+	} 
+} 
+
+int main() { 
+	int N; char nam[11]; int namMas[10] = { 0 }; 
+	int length = 0, cho = 0, bad = 0; int enter = 0; 
+	scanf("%s", &nam); 
+    scanf("%d", &N); 
+	length = strlen(nam); 
+	length--; 
+	digits(nam, namMas, length, &bad); 
+	for (int i = 0; i < length; i++){ 
+		if (namMas[i] == namMas[i + 1]) 
+			enter++; 
+	} 
+	if (enter != length && bad == 0) { 
+		for (int i = 0; i < N; i++) { 
+			change(length, namMas, &cho); 
+			if (cho == 0) { 
+				for (int i = 0; i <= length; i++) 
+					printf("%d", namMas[i]); 
+				printf("\n"); 
+			} 
+			else { 
+				printf(" "); 
+				break; 
+			} 
+		} 
+	} 
+	else { 
+		if (bad == 1) { 
+			printf("bad input"); 
+		} 
+		else { 
+			if (N != 0 && namMas[0] != 0) { 
+				printf("bad input"); 
+			} 
+			else { 
+				printf(" "); 
+			} 
+		} 
+	} 
+	return 0; 
+}
