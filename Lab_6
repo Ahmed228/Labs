@@ -1,0 +1,36 @@
+#define _CRT_SECURE_NO_WARNINGS 
+#include <stdio.h> 
+#include <stdlib.h> 
+//#include <conio.h>
+
+//алгоритм сортировки
+void qsort(int *mass, int first, int last) {
+	int mid = (first + last) / 2;
+	int f = first; int l = last; int x = 0;
+	do {
+		while (mass[f]<mass[mid]) f++;
+		while (mass[l]>mass[mid]) l--;
+		if (l >= f) {
+			x = mass[f];
+			mass[f] = mass[l];
+			mass[l] = x;
+			f++; 
+			l--;
+		}
+	} while (f<l);
+	if (first<l) qsort(mass, first, l);
+	if (last>f) qsort(mass, f, last);
+}
+
+int main(void){
+	int *mass; int n = 0;
+	scanf("%d\n", &n);
+	if (n <= 0) return 0;
+	mass = (int*)malloc(n * sizeof(int));
+	for (long int i = 0; i<n; i++) scanf("%d", &mass[i]);
+	qsort(mass, 0, n-1);
+	for (long int i = 0; i<n; i++) printf("%d ", mass[i]);
+	free(mass);
+	//_getch();
+	return 0;
+}
