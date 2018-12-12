@@ -1,0 +1,56 @@
+#define _CRT_SECURE_NO_WARNINGS 
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <string.h> 
+
+void input(FILE *in, unsigned char *word, int *size) { 
+	unsigned char x = '\0'; 
+	while (x != '\n') { 
+		x = (unsigned char) getc(in); 
+		word[*size] = x; 
+		(*size)++; 
+	} 
+	word[*size - 1] = '\0'; 
+	*size = *size - 2; 
+} 
+
+void table(const unsigned char *word, int size, int T[]) { 
+	size++; 
+	for (int i = 0; i < 256; i++) 
+		T[i] = size; 
+	for (int i = 0; i < size - 1; i++) 
+		T[word[i]] = size - 1 - i; 
+} 
+
+//поиск подстроки
+int find(int size, const unsigned char *str, const int T[], const unsigned char *word, int sizeStr, int *ind) { 
+	int skip = 0; 
+	while ((sizeStr - skip) >= size + 1) { 
+		int i = size + 1; 
+		do { 
+			printf("%d ", *ind + skip + i); 
+			i--; 
+		} while (str[skip + i] == word[i] && i > 0); 
+		skip += T[str[skip + size]]; 
+	} 
+	*ind += skip; 
+	return sizeStr - skip; 
+} 
+
+int main() { 
+	int sizeStr = 0; int size = 0; int T[256] = {0}; 
+	unsigned char word[17] = {0}; unsigned char str[1025] = {0}; 
+	FILE *in = fopen("in.txt", "r"); 
+	input(in, word, &size); 
+	table(word, size, T); 
+	int a = 0, tab = 0; 
+	while ((sizeStr = fread(&str[tab], 1, (size_t) (1024 - tab), in)) > 0) { 
+		tab = find(size, str, T, word, sizeStr, &a); 
+		for (int k = 0; k <= tab; k++) { 
+			str[k] = str[sizeStr + k - tab - 1]; 
+		} 
+		memset(&str[tab + 1], '\0', (size_t) (1024 - tab)); 
+	} 
+	fclose(in); 
+	return 0; 
+}
