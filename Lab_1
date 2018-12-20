@@ -64,18 +64,18 @@ long long FractionPart(char *number, int cc1, int cc2, int Dot, char *number2, i
 }
 
 //Проверка
-bool check(char *number, int cc1, int cc2, int Dot, int length) {
+int check(char *number, int cc1, int cc2, int Dot, int length) {
 	if (cc1 < 2 || cc1 > 16 || cc2 < 2 || cc2 > 16 || Dot == 0 || length > 13) {
 		printf("bad input");
-		return false;
+		return 0;
 	}
 	for (int i = 0; i < length; i++) {
 		if ((number[i]>'.' && number[i]<48) || (number[i]>67 && number[i]<'A') || (number[i]>'F' && number[i]<'a') || (number[i]>'f') || ((number[i] - 48) >= cc1 && number[i] <= 57 && number[i] >= 48) || ((number[i] - 55) >= cc1 && number[i] <= 'F' && number[i] >= 'A') || ((number[i] - 87) >= cc1 && number[i] >= 'a')){
 			printf("bad input");
-			return false;
+			return 0;
 		}
 	}
-	return true;
+	return 1;
 }
 
 //Главная часть 
