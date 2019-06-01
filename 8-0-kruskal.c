@@ -8,34 +8,36 @@ struct graph {
     int weight;
 };
 
-void check1(int vershina, int rebro,FILE *out) {
+int check1(int vershina, int rebro,FILE *out) {
     if ((vershina < 0) || (vershina > 5000)) {
         fprintf(out, "bad number of vertices");
-        exit(0);
+        return 0;
     }
     if ((rebro < 0) || (rebro > (vershina * (vershina + 1) / 2))) {
         fprintf(out, "bad number of edges");
-        exit(0);
+        return 0;
     }
     if (vershina == 0) {
         fprintf(out, "no spanning tree");
-        exit(0);
+        return 0;
     }
+    return 1;
 }
 
-void check_Rebro(struct graph *gr, int ver, int i,FILE *out) {
+int check_Rebro(struct graph *gr, int ver, int i,FILE *out) {
     if (gr[i].start < 1 || gr[i].start > ver) {
         fprintf(out, "bad vertex");
-        exit(0);
+        return 0;
     }
     if (gr[i].end < 1 || gr[i].end > ver) {
         fprintf(out, "bad vertex");
-        exit(0);
+        return 0;
     }
     if (gr[i].weight < 0 || gr[i].weight > INT_MAX) {
         fprintf(out, "bad length");
-        exit(0);
+        return 0;
     }
+    return 1;
 }
 
 void Sort(struct graph *gr, int l, int r) {
@@ -89,52 +91,64 @@ int main() {
     FILE *in = fopen("in.txt", "r");
     FILE *out = fopen("out.txt", "w");
     struct graph *Grrra = NULL;
-    int vershina = 0; int rebro = 0; int err = 0; int ha = 0; int letter = 0;
-    int *status = NULL; int *rank = NULL; int *full = NULL;
+    int vershina = 0;
+    int rebro = 0;
+    int err = 0;
+    int ha = 0;
+    int letter = 0;
+    int *status = NULL;
+    int *rank = NULL;
+    int *full = NULL;
     fscanf(in, "%d", &vershina);
     fscanf(in, "%d", &rebro);
-    check1(vershina, rebro, out);
-    Grrra = malloc(rebro * sizeof(struct graph));
-    status = malloc((vershina + 1) * sizeof(int));
-    rank = malloc((vershina + 1) * sizeof(int));
-    full = malloc((vershina + 1) * sizeof(int));
-    if ((vershina == 1) && (rebro == 0)) exit(0);
-    while ((fscanf(in, "%d", &letter)) != EOF) {
-        switch (err) {
-            case 0:Grrra[ha].start = letter;
-                err++;
-                break;
-            case 1:Grrra[ha].end = letter;
-                err++;
-                break;
-            case 2:Grrra[ha].weight = letter;
-                err = 0;
-                break;
+
+    if (check1(vershina, rebro, out)) {
+        Grrra = malloc(rebro * sizeof(struct graph));
+        status = malloc((vershina + 1) * sizeof(int));
+        rank = malloc((vershina + 1) * sizeof(int));
+        full = malloc((vershina + 1) * sizeof(int));
+        if ((vershina == 1) && (rebro == 0)) exit(0);
+        while ((fscanf(in, "%d", &letter)) != EOF) {
+            switch (err) {
+                case 0:
+                    Grrra[ha].start = letter;
+                    err++;
+                    break;
+                case 1:
+                    Grrra[ha].end = letter;
+                    err++;
+                    break;
+                case 2:
+                    Grrra[ha].weight = letter;
+                    err = 0;
+                    break;
+            }
+            if (err == 0) {
+                if (check_Rebro(Grrra, vershina, ha, out)) {
+                    full[Grrra[ha].end] = 1;
+                    full[Grrra[ha].start] = 1;
+                    ha++;
+                }
+            }
         }
-        if (err == 0) {
-            check_Rebro(Grrra, vershina, ha,out);
-            full[Grrra[ha].end] = 1;
-            full[Grrra[ha].start] = 1;
-            ha++;
+        if (ha != rebro) {
+            fprintf(out, "bad number of lines");
+            return 0;
         }
-    }
-    if (ha != rebro) {
-        fprintf(out, "bad number of lines");
-        exit(0);
-    }
-    for (int i = 1; i <= vershina; i++) {
-        if (full[i] != 1) {
-            fprintf(out, "no spanning tree");
-            exit(0);
+        for (int i = 1; i <= vershina; i++) {
+            if (full[i] != 1) {
+                fprintf(out, "no spanning tree");
+                return 0;
+            }
         }
+        Sort(Grrra, 0, rebro - 1);
+        crascal(status, Grrra, vershina, rebro, rank, out);
+        free(status);
+        free(rank);
+        free(full);
+        free(Grrra);
+        fclose(in);
+        fclose(out);
+        return 0;
     }
-    Sort(Grrra, 0, rebro - 1);
-    crascal(status, Grrra, vershina, rebro, rank, out);
-    free(status);
-    free(rank);
-    free(full);
-    free(Grrra);
-    fclose(in);
-    fclose(out);
-    return 0;
 }
