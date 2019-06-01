@@ -43,7 +43,7 @@ int main(){
     fscanf(in,"%d",&N);
     if (fscanf(in,"%d",&M) == EOF){  //проверка на наличие данных об узлах
         printf("bad number of lines");
-        exit(0);
+        return 0;
     }
     if ((N<0) || (N>1000)){             //проверка N
         printf ("bad number of vertices");
@@ -66,11 +66,13 @@ int main(){
     for (int i = 0; i < M; i++){
         if (fscanf(in, "%d%d", &a, &b) == EOF) {
             printf("bad number of lines");
-            exit(0);
+            free(arr);
+            return 0;
         }
         if ((a <=0) || (a > N) || (b<=0) || (b > N)){
             printf ("bad vertex");
-            exit(0);
+            free(arr);
+            return 0;
         }
         arr[a-1][0]++;
         arr[a-1][arr[a-1][0]] = b;
